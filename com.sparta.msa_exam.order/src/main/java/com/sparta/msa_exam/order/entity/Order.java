@@ -2,19 +2,24 @@ package com.sparta.msa_exam.order.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Entity
 @Table(name="order_db")
+@NoArgsConstructor
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long order_id;
 
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name="order_product", joinColumns = @JoinColumn(name = "order_id"))
-    @Column(name = "product_id")
-    private List<Long> product_ids;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductInOrder> product_ids = new ArrayList<>();
+
+    public Order(List<ProductInOrder> product_ids) {
+        this.product_ids = product_ids;
+    }
 }
