@@ -6,9 +6,9 @@ import com.sparta.msa_exam.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -25,4 +25,10 @@ public class ProductController {
         return ResponseEntity.ok(productService.addProduct(requestDto));
     }
 
+    /*상품 목록 조회 API*/
+    @GetMapping("/products")
+    public ResponseEntity<List<ProductResponseDto>> getProducts(
+    ){
+        return ResponseEntity.ok(productService.getProducts());
+    }
 }

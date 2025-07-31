@@ -8,6 +8,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ProductService {
@@ -22,4 +24,9 @@ public class ProductService {
         return new ProductResponseDto(savedProduct.getProduct_id(), savedProduct.getName(), savedProduct.getSupply_price());
     }
 
+    /*상품 목록 전체 응답 Dto 리스트로 반환*/
+    public List<ProductResponseDto> getProducts() {
+        List<Product> products = productRepository.findAll();
+        return products.stream().map(ProductResponseDto::new).toList();
+    }
 }
