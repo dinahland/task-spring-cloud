@@ -2,7 +2,9 @@ package com.sparta.msa_exam.product.dto;
 
 import com.sparta.msa_exam.product.entity.Product;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@Getter
 @AllArgsConstructor
 public class ProductResponseDto {
     private Long product_id;

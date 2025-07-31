@@ -13,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/products")
 public class ProductController {
     private final ProductService productService;
 
@@ -20,13 +21,13 @@ public class ProductController {
     private String serverPort;  // 애플리케이션이 실행 중인 포트
 
     /*상품 추가 API*/
-    @PostMapping("/products")
+    @PostMapping
     public ResponseEntity<ProductResponseDto> addProduct(@RequestBody ProductRequestDto requestDto){
         return ResponseEntity.ok(productService.addProduct(requestDto));
     }
 
     /*상품 목록 조회 API*/
-    @GetMapping("/products")
+    @GetMapping
     public ResponseEntity<List<ProductResponseDto>> getProducts(
     ){
         return ResponseEntity.ok(productService.getProducts());
