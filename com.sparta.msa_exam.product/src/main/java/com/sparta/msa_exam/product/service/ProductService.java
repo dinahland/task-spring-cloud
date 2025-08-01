@@ -25,6 +25,7 @@ public class ProductService {
     }
 
     /*상품 목록 전체 응답 Dto 리스트로 반환*/
+    @Transactional
     public List<ProductResponseDto> getProducts() {
         List<Product> products = productRepository.findAll();
         return products.stream().map(ProductResponseDto::new).toList();

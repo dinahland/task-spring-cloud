@@ -1,8 +1,13 @@
 package com.sparta.msa_exam.auth.service;
 
+import com.sparta.msa_exam.auth.dto.SignUpRequestDto;
+import com.sparta.msa_exam.auth.dto.SignUpResponseDto;
+import com.sparta.msa_exam.auth.entity.User;
+import com.sparta.msa_exam.auth.repository.AuthRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +17,7 @@ import java.util.Date;
 @Service
 public class AuthService {
 
+    private final AuthRepository authRepository;
     @Value("${spring.application.name}")
     private String issuer;
 
@@ -26,8 +32,9 @@ public class AuthService {
      *
      * @param secretKey Base64 URL 인코딩된 비밀 키
      */
-    public AuthService(@Value("${service.jwt.secret-key}") String secretKey) {
+    public AuthService(@Value("${service.jwt.secret-key}") String secretKey, AuthRepository authRepository) {
         this.secretKey = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(secretKey));
+        this.authRepository = authRepository;
     }
 
     /**
@@ -36,6 +43,7 @@ public class AuthService {
      * @param user_id 사용자 ID
      * @return 생성된 JWT 액세스 토큰
      */
+    @Transactional
     public String createAccessToken(String user_id) {
         return Jwts.builder()
                 // 사용자 ID를 클레임으로 설정
@@ -51,5 +59,13 @@ public class AuthService {
                 .signWith(secretKey)
                 // JWT 문자열로 컴팩트하게 변환
                 .compact();
+    }
+
+    /*username, password 회원 DB에 저장 후 응답 DTO 반환*/
+    @Transactional
+    public SignUpResponseDto signUp(SignUpRequestDto requestDto) {
+        User user = new User(requestDto.getUsername(), requestDto.getPassword());
+        User savedUser = authRepository.save(user);
+        return new SignUpResponseDto(savedUser.getId(), savedUser.getUsername());
     }
 }
