@@ -3,6 +3,7 @@ package com.sparta.msa_exam.order.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +17,12 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long order_id;
 
+    @Setter
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductInOrder> product_ids = new ArrayList<>();
 
     public Order(List<ProductInOrder> product_ids) {
         this.product_ids = product_ids;
     }
+
 }

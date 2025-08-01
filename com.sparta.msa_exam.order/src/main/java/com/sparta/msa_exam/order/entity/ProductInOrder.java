@@ -18,4 +18,9 @@ public class ProductInOrder {
     private Order order;
 
     private Long product_id;
+
+    public ProductInOrder(Order order, Long product_id) {
+        this.order = order;
+        this.product_id = product_id;
+    }
 }

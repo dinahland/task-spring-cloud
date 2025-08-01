@@ -21,3 +21,21 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:19090/eureka/
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        register-health-indicator: true
+        sliding-window-type: count_based
+        sliding-window-size: 5
+        minimum-number-of-calls: 5
+        slow-call-rate-threshold: 100
+        slow-call-duration-threshold:
+          seconds: 60
+        failure-rate-threshold: 50
+        permitted-number-of-calls-in-half-open-state: 3
+        wait-duration-in-open-state:
+          seconds: 20
+    instances:
+      orderService:
+        base-config: default
