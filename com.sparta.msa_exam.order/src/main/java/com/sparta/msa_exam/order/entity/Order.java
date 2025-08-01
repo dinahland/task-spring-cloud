@@ -25,4 +25,7 @@ public class Order {
         this.product_ids = product_ids;
     }
 
+    public void addProductInOrder(ProductInOrder productInOrder){
+        this.product_ids.add(productInOrder);
+    }
 }
