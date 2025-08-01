@@ -16,15 +16,10 @@ public class AuthController {
 
     private final AuthService authService;
 
-    /**
-     * 로그인 API
-     * 사용자 ID를 받아 JWT 액세스 토큰을 생성하여 응답합니다.
-     * @param user_id 사용자 ID
-     * @return JWT 액세스 토큰을 포함한 AuthResponse 객체를 반환합니다.
-     */
-    @GetMapping("/auth/sign-in")
-    public ResponseEntity<?> createAuthenticationToken(@RequestParam String user_id){
-        return ResponseEntity.ok(new AuthResponse(authService.createAccessToken(user_id)));
+    /* 로그인 API */
+    @PostMapping("/auth/sign-in")
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody SignUpRequestDto requestDto) {
+        return ResponseEntity.ok(new AuthResponse(authService.createAccessToken(requestDto)));
     }
 
     /*회원 가입 API*/

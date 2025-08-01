@@ -9,15 +9,18 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 public class AuthService {
 
     private final AuthRepository authRepository;
+
     @Value("${spring.application.name}")
     private String issuer;
 
@@ -37,17 +40,14 @@ public class AuthService {
         this.authRepository = authRepository;
     }
 
-    /**
-     * 사용자 ID를 받아 JWT 액세스 토큰을 생성합니다.
-     *
-     * @param user_id 사용자 ID
-     * @return 생성된 JWT 액세스 토큰
-     */
+    /*username, password 회원 DB와 일치하는지 확인 후 토큰 발급*/
     @Transactional
-    public String createAccessToken(String user_id) {
+    public String createAccessToken(SignUpRequestDto requestDto) {
+        Optional<User> optional_user = authRepository.findByUsernameAndPassword(requestDto.getUsername(), requestDto.getPassword());
+        User user = optional_user.orElseThrow(()->new AuthorizationDeniedException("존재하지 않는 회원입니다."));
         return Jwts.builder()
                 // 사용자 ID를 클레임으로 설정
-                .claim("user_id", user_id)
+                .claim("user_id", user.getId())
                 .claim("role", "ADMIN")
                 // JWT 발행자를 설정
                 .issuer(issuer)
