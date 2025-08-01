@@ -9,14 +9,24 @@ spring:
   cloud:
     gateway:
       routes:  # Spring Cloud Gateway의 라우팅 설정
+        - id: product-service-19093
+          uri: http://localhost:19093
+          predicates:
+            - Path=/products/**
+            - Weight=product-service-group, 70
+        - id: product-service-19094
+          uri: http://localhost:19094
+          predicates:
+            - Path=/products/**
+            - Weight=product-service-group, 30
         - id: order-service
           uri: lb://order-service
           predicates:
             - Path=/orders/**
-        - id: product-service
-          uri: lb://product-service
-          predicates:
-            - Path=/products/**
+#        - id: product-service
+#          uri: lb://product-service
+#          predicates:
+#            - Path=/products/**
         - id: auth-service
           uri: lb://auth-service
           predicates:
