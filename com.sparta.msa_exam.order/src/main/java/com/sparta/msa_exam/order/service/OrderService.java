@@ -29,6 +29,7 @@ public class OrderService {
 
     /*Order 인스턴스 생성 및 DB 저장 후 응답 Dto 반환*/
     @Transactional
+    @CircuitBreaker(name="orderService", fallbackMethod = "fallbackCreateOrder")
     public OrderResponseDto createOrder(OrderRequestDto requestDto) {
         Order order = new Order();
         checkProductList(requestDto, order);
@@ -37,7 +38,6 @@ public class OrderService {
     }
 
     /*상품 목록 조회 API 호출, product_ids의 모든 값이 상품 목록에 존재하는지 확인*/
-    @CircuitBreaker(name="orderService", fallbackMethod = "fallbackCheckProductList")
     public void checkProductList(OrderRequestDto requestDto, Order order) {
         List<ProductInfo> productList = productClient.getProducts();
         Map<Long, ProductInfo> productMap = productList.stream().collect(Collectors.toMap(ProductInfo::getProduct_id, Function.identity()));
@@ -54,13 +54,12 @@ public class OrderService {
         order.setProduct_ids(product_ids);
     }
 
-    public void fallbackCheckProductList(Throwable throwable) {
+    public OrderResponseDto fallbackCreateOrder(OrderRequestDto requestDto, Throwable throwable) {
+        log.error("Fallback: 상품 서비스 호출 또는 주문 생성 중 오류 발생", throwable);
         if(throwable instanceof IllegalArgumentException){
-            log.info("존재하지 않는 상품 주문 시도");
             throw (IllegalArgumentException) throwable;
         } else{
-            log.info("상품 서비스 호출 실패");
-            throw new RuntimeException(throwable.getMessage());
+            throw new RuntimeException("상품 서비스를 이용할 수 없습니다. 나중에 다시 시도해주세요.");
         }
     }
 }
