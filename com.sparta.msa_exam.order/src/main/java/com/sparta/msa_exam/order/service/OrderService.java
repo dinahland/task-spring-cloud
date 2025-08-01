@@ -12,6 +12,7 @@ import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -55,7 +56,9 @@ public class OrderService {
 
     /*주문이 존재하는지 확인 후 응답 DTO 형태로 반환*/
     @Transactional
+    @Cacheable(value = "order", key = "#orderId")
     public OrderResponseDto getOrder(Long orderId) {
+        log.info("DB 조회!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");  //캐시 적용 여부 확인 로그
         Order order = orderRepository.findById(orderId).orElseThrow(()->new IllegalArgumentException((orderId + "번 주문을 찾을 수 없습니다.")));
         List<Long> product_ids = order.getProduct_ids().stream().map(ProductInOrder::getProduct_id).toList();
         return new OrderResponseDto(order.getOrder_id(), product_ids);
