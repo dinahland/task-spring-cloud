@@ -26,5 +26,11 @@ public class OrderController {
     public ResponseEntity<OrderResponseDto> addProduct(@PathVariable("orderId") Long orderId, @RequestBody ProductInOrderRequestDto requestDto){
         return ResponseEntity.ok(orderService.addProduct(orderId, requestDto));
     }
+
+    /*주문 단건 조회 API*/
+    @GetMapping("/{orderId}")
+    public ResponseEntity<OrderResponseDto> getOrder(@PathVariable("orderId") Long orderId){
+        return ResponseEntity.ok(orderService.getOrder(orderId));
+    }
 }
 

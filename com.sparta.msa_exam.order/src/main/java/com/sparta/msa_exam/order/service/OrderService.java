@@ -53,6 +53,14 @@ public class OrderService {
         }
     }
 
+    /*주문이 존재하는지 확인 후 응답 DTO 형태로 반환*/
+    @Transactional
+    public OrderResponseDto getOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId).orElseThrow(()->new IllegalArgumentException((orderId + "번 주문을 찾을 수 없습니다.")));
+        List<Long> product_ids = order.getProduct_ids().stream().map(ProductInOrder::getProduct_id).toList();
+        return new OrderResponseDto(order.getOrder_id(), product_ids);
+    }
+
     /*상품 목록 조회 API 호출, product_ids의 모든 값이 상품 목록에 존재하는지 확인하고 유효 상품은 주문 목록에 추가*/
     public void checkProductList(OrderRequestDto requestDto, Order order) {
 
